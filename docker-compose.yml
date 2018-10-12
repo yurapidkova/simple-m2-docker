@@ -1,0 +1,39 @@
+version: '3.5'
+services:
+  nginx:
+    container_name: m2_nginx
+    image: nginx:latest
+    volumes:
+    - ./:/var/www/m2
+    - ./docker/nginx/m2.conf:/etc/nginx/conf.d/default.conf
+    ports:
+    - 8001:80
+    networks:
+    - default
+
+  php:
+    container_name: m2_php
+    build: ./docker/php
+    volumes:
+    - ./:/var/www/m2
+    working_dir: /var/www/m2
+    expose:
+    - 9000
+    networks:
+    - default
+
+  db:
+    container_name: m2_db
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: 'm2'
+    volumes:
+    - ./docker/db/:/var/lib/mysql
+    expose:
+    - 3306
+    ports:
+    - 3307:3306
+    networks:
+    - default
